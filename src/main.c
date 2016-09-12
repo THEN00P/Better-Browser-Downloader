@@ -2,7 +2,6 @@
 #include <string.h>
 #include <stdlib.h>
 
-#include <psp2/ctrl.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/kernel/processmgr.h>
 #include <psp2/kernel/threadmgr.h>
@@ -11,41 +10,11 @@
 
 #include "sqlite3.h"
 #include "graphics.h"
+#include "net.h"
 
 #define printf psvDebugScreenPrintf
 
-#define APP_DB "ur0:shell/db/app.db"
-
-static unsigned buttons[] = {
-	SCE_CTRL_SELECT,
-	SCE_CTRL_START,
-	SCE_CTRL_UP,
-	SCE_CTRL_RIGHT,
-	SCE_CTRL_DOWN,
-	SCE_CTRL_LEFT,
-	SCE_CTRL_LTRIGGER,
-	SCE_CTRL_RTRIGGER,
-	SCE_CTRL_TRIANGLE,
-	SCE_CTRL_CIRCLE,
-	SCE_CTRL_CROSS,
-	SCE_CTRL_SQUARE,
-};
-
-int get_key(void) {
-	static unsigned prev = 0;
-	SceCtrlData pad;
-	while (1) {
-		memset(&pad, 0, sizeof(pad));
-		sceCtrlPeekBufferPositive(0, &pad, 1);
-		unsigned new = prev ^ (pad.buttons & prev);
-		prev = pad.buttons;
-		for (int i = 0; i < sizeof(buttons)/sizeof(*buttons); ++i)
-			if (new & buttons[i])
-				return buttons[i];
-
-		sceKernelDelayThread(1000); // 1ms
-	}
-}
+#define APP_DB "ur0:/shell/db/app.db"
 
 void sql_simple_exec(sqlite3 *db, const char *sql) {
 	char *error = NULL;
@@ -63,14 +32,11 @@ fail:
 
 void do_uri_mod() {
 	int ret;
-	char sql[0x1000];
-	char *error = NULL;
 
 	sqlite3 *db;
 	ret = sqlite3_open(APP_DB, &db);
 	if (ret) {
 		printf("Failed to open the database: %s\n", sqlite3_errmsg(db));
-		goto fail;
 	}
 
 	sql_simple_exec(db, "DELETE FROM tbl_uri WHERE titleId='VPKMIRROR'");
@@ -80,30 +46,19 @@ void do_uri_mod() {
 	db = NULL;
 
 	return;
-
-fail:
-	if (db)
-		sqlite3_close(db);
 }
 
-int main(void) {
-	int key = 0;
-
+int main(int argc, char *argv[]) {
 	psvDebugScreenInit();
+	netInit();
+	httpInit();
 
-	// display info on progress here?
+	// I still am not 100% sure how to handle arguments here...
 
-again:
+	sceKernelDelayThread(5 * 1000 * 1000);
 
-	/*key = get_key();
-	switch (key) {
-	case SCE_CTRL_CROSS:
-		remove_app();
-		break;
-	default:
-		printf("Invalid input, try again.\n\n");
-		goto again;
-	}*/
+	httpTerm();
+	netTerm();
 
 	sceKernelExitProcess(0);
 }

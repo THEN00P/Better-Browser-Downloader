@@ -1,14 +1,14 @@
 TITLE_ID = VPKMIRROR
 TARGET = VPKMirror
-OBJS   = src/main.o src/font.o src/graphics.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
+OBJS   = src/main.o src/net.o src/font.o src/graphics.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
 
-LIBS = -lSceDisplay_stub -lSceCtrl_stub -lSceSysmodule_stub
+LIBS = -lSceDisplay_stub -lSceSysmodule_stub -lSceNet_stub -lSceNetCtl_stub -lSceHttp_stub
 
 DEFINES = -DSQLITE_OS_OTHER=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_THREADSAFE=0
 
 PREFIX  = arm-vita-eabi
 CC      = $(PREFIX)-gcc
-CFLAGS  = -Wl,-q -O3 -std=c99 $(DEFINES)
+CFLAGS  = -Wl,-q -O3 $(DEFINES)
 ASFLAGS = $(CFLAGS)
 
 all: $(TARGET).vpk
