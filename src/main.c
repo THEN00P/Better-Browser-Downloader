@@ -4,6 +4,7 @@
 
 #include <psp2/ctrl.h>
 #include <psp2/io/fcntl.h>
+#include <psp2/kernel/processmgr.h>
 #include <psp2/kernel/threadmgr.h>
 #include <psp2/io/stat.h>
 #include <psp2/sysmodule.h>
@@ -60,7 +61,7 @@ fail:
 	sqlite3_close(db);
 }
 
-void install_uri() {
+void do_uri_mod() {
 	int ret;
 	char sql[0x1000];
 	char *error = NULL;
@@ -72,7 +73,8 @@ void install_uri() {
 		goto fail;
 	}
 
-	// sql queries here
+	sql_simple_exec(db, "DELETE FROM tbl_uri WHERE titleId='VPKMIRROR'");
+	sql_simple_exec(db, "INSERT INTO tbl_uri VALUES ('VPKMIRROR', '1', 'vpk', NULL)");
 
 	sqlite3_close(db);
 	db = NULL;

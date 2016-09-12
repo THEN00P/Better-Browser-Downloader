@@ -18,7 +18,7 @@ $(TARGET).vpk: eboot.bin
 	vita-pack-vpk -s param.sfo -b eboot.bin $@
 
 eboot.bin: $(TARGET).velf
-	vita-make-fself -s $< eboot.bin
+	vita-make-fself $< eboot.bin
 
 $(TARGET).velf: $(TARGET).elf
 	vita-elf-create $< $@
