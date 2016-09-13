@@ -53,7 +53,17 @@ int main(int argc, char *argv[]) {
 	netInit();
 	httpInit();
 
-	// I still am not 100% sure how to handle arguments here...
+	/*
+	<_SMOKE_> so, I'm trying to pass an argument via a custom uri to my homebrew, but it seems arguments arent supported in the vitasdk? Any suggestions?
+	<frangarcj> _SMOKE_, how?
+	<endrift> _SMOKE_: I've been trying to figure it out myself, to no avail at the moment.
+	<frangarcj> I mean the custom url
+	<frangarcj> newlib does not support params right now i think
+	<endrift> newlib absolutely does not
+	<endrift> it intentionally passes in 0, ""
+	*/
+
+	printf("argc: %d argv: %s\n", argc, argv[0]);
 
 	sceKernelDelayThread(5 * 1000 * 1000);
 
