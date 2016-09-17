@@ -65,8 +65,7 @@ int main(int argc, char *argv[]) {
 	sceAppMgrGetAppParam(AppParam);
 
 	// checks if argument is present, if not it does the uri mod and opens the website
-	int arg_len = 0;
-	arg_len = strlen(AppParam);
+	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
 		do_uri_mod();
 		sceKernelExitProcess(0);
@@ -78,13 +77,18 @@ int main(int argc, char *argv[]) {
 	char *vpk_name;
 	vpk_name = strchr(AppParam, '?')+1;
 
-	printf("vpk_name = %s\n", vpk_name);
-
 	// create url based off the vpk name
 	char *vpk_url = malloc(1024 * sizeof(char));
 	snprintf(vpk_url, 1024, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
-	printf("vpk_url = %s\n", vpk_url);
+	// check if ptmp directory exists, create directory if necessary
+	int dir_chk = sceIoDopen("ux0:/ptmp");
+	if (dir_chk != 0) {
+		sceIoMkdir("ux0:/ptmp", 0777);
+	}
+
+	//download vpk
+	download(vpk_url, "ux0:/ptmp/brew.vpk");
 
 	sceKernelDelayThread(3 * 1000 * 1000);
 
