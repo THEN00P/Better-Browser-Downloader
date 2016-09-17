@@ -2,6 +2,7 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <psp2/appmgr.h>
 #include <psp2/apputil.h>
 #include <psp2/io/fcntl.h>
 #include <psp2/io/stat.h>
@@ -17,7 +18,7 @@
 
 #define APP_DB "ur0:/shell/db/app.db"
 
-int sceAppMgrGetAppParam(char *arg);
+int sceAppMgrGetAppParam(char *param);
 
 void sql_simple_exec(sqlite3 *db, const char *sql) {
 	char *error = NULL;
@@ -56,19 +57,36 @@ int main(int argc, char *argv[]) {
 	netInit();
 	httpInit();
 
-	/*
-	<_SMOKE_> so, I'm trying to pass an argument via a custom uri to my homebrew, but it seems arguments arent supported in the vitasdk? Any suggestions?
-	<frangarcj> _SMOKE_, how?
-	<endrift> _SMOKE_: I've been trying to figure it out myself, to no avail at the moment.
-	<frangarcj> I mean the custom url
-	<frangarcj> newlib does not support params right now i think
-	<endrift> newlib absolutely does not
-	<endrift> it intentionally passes in 0, ""
+	/* grab app param from our custom uri
+	   full app param looks like:
+	   type=LAUNCH_APP_BY_URI&uri=vpk:install?test
 	*/
+	char AppParam[1024];
+	sceAppMgrGetAppParam(AppParam);
 
-	printf("argc: %d argv: %s\n", argc, argv[0]);
+	// checks if argument is present, if not it does the uri mod and opens the website
+	int arg_len = 0;
+	arg_len = strlen(AppParam);
+	if (arg_len == 0) {
+		do_uri_mod();
+		sceKernelExitProcess(0);
+		// this makes hard crashes occasionally, no idea why. Commented out for now
+		//sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
+	}
 
-	sceKernelDelayThread(5 * 1000 * 1000);
+	// get the part of the argument that we need
+	char *vpk_name;
+	vpk_name = strchr(AppParam, '?')+1;
+
+	printf("vpk_name = %s\n", vpk_name);
+
+	// create url based off the vpk name
+	char *vpk_url = malloc(1024 * sizeof(char));
+	snprintf(vpk_url, 1024, "http://vpkmirror.com/files/vpk/%s", vpk_name);
+
+	printf("vpk_url = %s\n", vpk_url);
+
+	sceKernelDelayThread(3 * 1000 * 1000);
 
 	httpTerm();
 	netTerm();
