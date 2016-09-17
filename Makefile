@@ -2,7 +2,8 @@ TITLE_ID = VPKMIRROR
 TARGET = VPKMirror
 OBJS   = src/main.o src/net.o src/font.o src/graphics.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
 
-LIBS = -lSceDisplay_stub -lSceSysmodule_stub -lSceNet_stub -lSceNetCtl_stub -lSceHttp_stub
+LIBS = -lSceDisplay_stub -lSceSysmodule_stub -lSceNet_stub -lSceNetCtl_stub -lSceHttp_stub \
+	-lSceAppMgr_stub
 
 DEFINES = -DSQLITE_OS_OTHER=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_THREADSAFE=0
 

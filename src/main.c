@@ -2,10 +2,11 @@
 #include <string.h>
 #include <stdlib.h>
 
+#include <psp2/apputil.h>
 #include <psp2/io/fcntl.h>
+#include <psp2/io/stat.h>
 #include <psp2/kernel/processmgr.h>
 #include <psp2/kernel/threadmgr.h>
-#include <psp2/io/stat.h>
 #include <psp2/sysmodule.h>
 
 #include "sqlite3.h"
@@ -15,6 +16,8 @@
 #define printf psvDebugScreenPrintf
 
 #define APP_DB "ur0:/shell/db/app.db"
+
+int sceAppMgrGetAppParam(char *arg);
 
 void sql_simple_exec(sqlite3 *db, const char *sql) {
 	char *error = NULL;
@@ -30,7 +33,7 @@ fail:
 	sqlite3_close(db);
 }
 
-void do_uri_mod() {
+void do_uri_mod(void) {
 	int ret;
 
 	sqlite3 *db;
