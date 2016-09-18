@@ -70,9 +70,8 @@ int main(int argc, char *argv[]) {
 	if (arg_len == 0) {
 		printf("Installing uri mod...\n");
 		do_uri_mod();
+		sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
 		sceKernelExitProcess(0);
-		// this makes hard crashes occasionally, no idea why. Commented out for now
-		//sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
 	}
 
 	// get the part of the argument that we need
@@ -83,7 +82,7 @@ int main(int argc, char *argv[]) {
 	char *vpk_url = malloc(1024 * sizeof(char));
 	snprintf(vpk_url, 1024, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
-	// check if ptmp directory exists, create directory if necessary
+	// check if directory exists, create directory if necessary
 	int dir_chk = sceIoDopen("ux0:/data/VPKMirror");
 	if (dir_chk != 0) {
 		sceIoMkdir("ux0:/data/VPKMirror", 0777);
