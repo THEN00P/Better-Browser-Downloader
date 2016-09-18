@@ -54,8 +54,6 @@ extern vita2d_pgf *font;
 
 #define BACKGROUND_COLOR 0xFF000000
 
-extern int SCE_CTRL_ENTER, SCE_CTRL_CANCEL;
-
 int isInArchive();
 
 enum DialogSteps {

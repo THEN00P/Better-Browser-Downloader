@@ -35,30 +35,15 @@ void initSceAppUtil() {
 	memset(&boot_param, 0, sizeof(SceAppUtilBootParam));
 	sceAppUtilInit(&init_param, &boot_param);
 
-	// System params
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, &language);
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_ENTER_BUTTON, &enter_button);
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_DATE_FORMAT, &date_format);
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_TIME_FORMAT, &time_format);
-
-	/*if (enter_button == SCE_SYSTEM_PARAM_ENTER_BUTTON_CIRCLE) {
-		SCE_CTRL_ENTER = SCE_CTRL_CIRCLE;
-		SCE_CTRL_CANCEL = SCE_CTRL_CROSS;
-	}*/
-
 	// Set common dialog config
 	SceCommonDialogConfigParam config;
 	sceCommonDialogConfigParamInit(&config);
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, (int *)&config.language);
-	//sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_ENTER_BUTTON, (int *)&config.enterButtonAssign);
+	sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, (int *)&config.language);
+	sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_ENTER_BUTTON, (int *)&config.enterButtonAssign);
 	sceCommonDialogSetConfigParam(&config);
 }
 
 void finishSceAppUtil() {
-	// Unmount
-	sceAppUtilPhotoUmount();
-	sceAppUtilMusicUmount();
-
 	// Shutdown AppUtil
 	sceAppUtilShutdown();
 }

@@ -53,11 +53,6 @@ int extract_vpk(char *path) {
 }
 
 int main(int argc, char *argv[]) {
-	initSceAppUtil();
-	initVita2dLib();
-	netInit();
-	httpInit();
-
 	/* grab app param from our custom uri
 	   full app param looks like:
 	   type=LAUNCH_APP_BY_URI&uri=vpk:install?test
@@ -73,6 +68,12 @@ int main(int argc, char *argv[]) {
 		sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
 		sceKernelExitProcess(0);
 	}
+
+	// argument recieved, init everything
+	initVita2dLib();
+	initSceAppUtil();
+	netInit();
+	httpInit();
 
 	// get the part of the argument that we need
 	char *vpk_name;
@@ -94,12 +95,12 @@ int main(int argc, char *argv[]) {
 	snprintf(vpk_path, 1024, "ux0:/data/VPKMirror/%s", vpk_name);
 	//download(vpk_url, vpk_path);
 
-	initMessageDialog(SCE_MSG_DIALOG_BUTTON_TYPE_OK, "test message!");
-
 	while (1) {
 		startDrawing();
+		initMessageDialog(SCE_MSG_DIALOG_BUTTON_TYPE_OK, "test message!");
 		isMessageDialogRunning();
 		updateMessageDialog();
+		vita2d_common_dialog_update();
 		endDrawing();
 	}
 
@@ -107,7 +108,6 @@ int main(int argc, char *argv[]) {
 
 	httpTerm();
 	netTerm();
-
 	finishSceAppUtil();
 	finishVita2dLib();
 
