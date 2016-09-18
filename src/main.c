@@ -56,6 +56,7 @@ int main(int argc, char *argv[]) {
 	psvDebugScreenInit();
 	netInit();
 	httpInit();
+	printf("VPKMirror BETA\n");
 
 	/* grab app param from our custom uri
 	   full app param looks like:
@@ -67,6 +68,7 @@ int main(int argc, char *argv[]) {
 	// checks if argument is present, if not it does the uri mod and opens the website
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
+		printf("Installing uri mod...\n");
 		do_uri_mod();
 		sceKernelExitProcess(0);
 		// this makes hard crashes occasionally, no idea why. Commented out for now
@@ -82,13 +84,18 @@ int main(int argc, char *argv[]) {
 	snprintf(vpk_url, 1024, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
 	// check if ptmp directory exists, create directory if necessary
-	int dir_chk = sceIoDopen("ux0:/ptmp");
+	int dir_chk = sceIoDopen("ux0:/data/VPKMirror");
 	if (dir_chk != 0) {
-		sceIoMkdir("ux0:/ptmp", 0777);
+		sceIoMkdir("ux0:/data/VPKMirror", 0777);
 	}
 
 	//download vpk
-	download(vpk_url, "ux0:/ptmp/brew.vpk");
+	printf("Downloading vpk..\n");
+	char *vpk_path = malloc(1024 * sizeof(char));
+	snprintf(vpk_path, 1024, "ux0:/data/VPKMirror/%s", vpk_name);
+	download(vpk_url, vpk_path);
+
+	printf("Done! Exiting in 3 seconds...\n");
 
 	sceKernelDelayThread(3 * 1000 * 1000);
 
