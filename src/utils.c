@@ -19,22 +19,12 @@
 #include "main.h"
 #include "file.h"
 #include "message_dialog.h"
-//#include "uncommon_dialog.h"
 #include "utils.h"
-#include "bm.h"
 
 SceCtrlData pad;
 uint32_t old_buttons, current_buttons, pressed_buttons, hold_buttons, hold2_buttons, released_buttons;
 
-static int netdbg_sock = -1;
-static void *net_memory = NULL;
-static int net_init = -1;
-
 static int lock_power = 0;
-
-static uint64_t wallpaper_time_start = 0;
-static int wallpaper_random_delay = 0;
-static float wallpaper_alpha = 255.0f;
 
 void startDrawing() {
 	vita2d_start_drawing();
@@ -43,7 +33,6 @@ void startDrawing() {
 }
 
 void endDrawing() {
-	//drawUncommonDialog();
 	vita2d_end_drawing();
 	vita2d_common_dialog_update();
 	vita2d_swap_buffers();
@@ -231,70 +220,4 @@ void getSizeString(char *string, uint64_t size) {
 	}
 
 	sprintf(string, "%.*f %s", (i == 0) ? 0 : 2, double_size, units[i]);
-}
-
-void getDateString(char *string, int date_format, SceDateTime *time) {
-	switch (date_format) {
-		case SCE_SYSTEM_PARAM_DATE_FORMAT_YYYYMMDD:
-			sprintf(string, "%04d/%02d/%02d", time->year, time->month, time->day);
-			break;
-
-		case SCE_SYSTEM_PARAM_DATE_FORMAT_DDMMYYYY:
-			sprintf(string, "%02d/%02d/%04d", time->day, time->month, time->year);
-			break;
-
-		case SCE_SYSTEM_PARAM_DATE_FORMAT_MMDDYYYY:
-			sprintf(string, "%02d/%02d/%04d", time->month, time->day, time->year);
-			break;
-	}
-}
-
-void getTimeString(char *string, int time_format, SceDateTime *time) {
-	SceDateTime time_local;
-	SceRtcTick tick_utc;
-	SceRtcTick tick_local;
-
-	sceRtcGetTick(time, &tick_utc);
-	sceRtcConvertUtcToLocalTime(&tick_utc, &tick_local);
-	sceRtcSetTick(&time_local, &tick_local);
-
-	switch(time_format) {
-		case SCE_SYSTEM_PARAM_TIME_FORMAT_12HR:
-			sprintf(string, "%02d:%02d %s", (time_local.hour > 12) ? (time_local.hour - 12) : ((time_local.hour == 0) ? 12 : time_local.hour), time_local.minute, time_local.hour >= 12 ? "PM" : "AM");
-			break;
-
-		case SCE_SYSTEM_PARAM_TIME_FORMAT_24HR:
-			sprintf(string, "%02d:%02d", time_local.hour, time_local.minute);
-			break;
-	}
-}
-
-int randomNumber(int low, int high) {
-   return rand() % (high - low + 1) + low;
-}
-
-int debugPrintf(char *text, ...) {
-#ifndef RELEASE
-	va_list list;
-	char string[512];
-
-	va_start(list, text);
-	vsprintf(string, text, list);
-	va_end(list);
-
-#ifdef ENABLE_FILE_LOGGING
-	SceUID fd = sceIoOpen("ux0:vitashell_log.txt", SCE_O_WRONLY | SCE_O_CREAT | SCE_O_APPEND, 0777);
-	if (fd >= 0) {
-		sceIoWrite(fd, string, strlen(string));
-		sceIoClose(fd);
-	}
-#endif
-
-#endif
-	return 0;
-}
-
-
-char *strcasestr(const char *haystack, const char *needle) {
-	return boyer_moore(haystack, needle); 
 }
