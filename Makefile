@@ -16,7 +16,7 @@ all: $(TARGET).vpk
 
 $(TARGET).vpk: eboot.bin
 	vita-mksfoex -s TITLE_ID=$(TITLE_ID) "VPK Mirror" param.sfo
-	vita-pack-vpk -s param.sfo -b eboot.bin -a src/icon0.png=sce_sys/icon0.png $@
+	vita-pack-vpk -s param.sfo -b eboot.bin -a res/icon0.png=sce_sys/icon0.png $@
 
 eboot.bin: $(TARGET).velf
 	vita-make-fself $< eboot.bin

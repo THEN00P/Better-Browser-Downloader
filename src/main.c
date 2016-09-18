@@ -88,7 +88,7 @@ int main(int argc, char *argv[]) {
 		sceIoMkdir("ux0:/data/VPKMirror", 0777);
 	}
 
-	//download vpk
+	// download vpk
 	printf("Downloading vpk..\n");
 	char *vpk_path = malloc(1024 * sizeof(char));
 	snprintf(vpk_path, 1024, "ux0:/data/VPKMirror/%s", vpk_name);
