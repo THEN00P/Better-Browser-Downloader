@@ -1,9 +1,13 @@
 TITLE_ID = VPKMIRROR
 TARGET = VPKMirror
-OBJS   = src/main.o src/net.o src/font.o src/graphics.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
+OBJS   = src/main.o src/font.o src/graphics.o src/init.o src/net.o src/io_process.o \
+	src/package_installer.o src/archive.o src/file.o src/message_dialog.o \
+	src/config.o src/utils.o src/sha1.o minizip/unzip.o minizip/ioapi.o \
+	src/bm.o src/sfo.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
 
-LIBS = -lSceDisplay_stub -lSceSysmodule_stub -lSceNet_stub -lSceNetCtl_stub -lSceHttp_stub \
-	-lSceAppMgr_stub
+LIBS = -lvita2d -lScePgf_stub -lSceDisplay_stub -lSceGxm_stub -lSceSysmodule_stub -lSceNet_stub \
+	-lSceCtrl_stub -lSceNetCtl_stub -lSceHttp_stub -lSceAppMgr_stub -lSceAppUtil_stub \
+	-lSceCommonDialog_stub -lScePower_stub libpromoter/libScePromoterUtil_stub.a -lz
 
 DEFINES = -DSQLITE_OS_OTHER=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_THREADSAFE=0
 
@@ -22,7 +26,7 @@ eboot.bin: $(TARGET).velf
 	vita-make-fself $< eboot.bin
 
 $(TARGET).velf: $(TARGET).elf
-	vita-elf-create $< $@
+	vita-elf-create $< $@ libpromoter/promoterutil.json
 
 $(TARGET).elf: $(OBJS)
 	$(CC) $(CFLAGS) $^ $(LIBS) -o $@

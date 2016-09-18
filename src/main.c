@@ -1,24 +1,21 @@
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-
-#include <psp2/appmgr.h>
-#include <psp2/apputil.h>
-#include <psp2/io/fcntl.h>
-#include <psp2/io/stat.h>
-#include <psp2/kernel/processmgr.h>
-#include <psp2/kernel/threadmgr.h>
-#include <psp2/sysmodule.h>
-
-#include "sqlite3.h"
+#include "main.h"
+#include "init.h"
 #include "graphics.h"
 #include "net.h"
+#include "sqlite3.h"
 
 #define printf psvDebugScreenPrintf
 
 #define APP_DB "ur0:/shell/db/app.db"
 
 int sceAppMgrGetAppParam(char *param);
+
+volatile int dialog_step = DIALOG_STEP_NONE;
+static int is_in_archive = 0;
+
+int isInArchive() {
+	return is_in_archive;
+}
 
 void sql_simple_exec(sqlite3 *db, const char *sql) {
 	char *error = NULL;
@@ -53,6 +50,7 @@ void do_uri_mod(void) {
 }
 
 int main(int argc, char *argv[]) {
+	initVita2dLib();
 	psvDebugScreenInit();
 	netInit();
 	httpInit();
@@ -100,6 +98,8 @@ int main(int argc, char *argv[]) {
 
 	httpTerm();
 	netTerm();
+
+	finishVita2dLib();
 
 	sceKernelExitProcess(0);
 }
