@@ -66,9 +66,19 @@ void do_uri_mod(void) {
 	return;
 }
 
+void open_browser(char *url) {
+	SceAppUtilWebBrowserParam param;
+
+	param.str = url;
+	param.strlen = strlen(url);
+	param.launchMode = 0;
+
+	sceAppUtilLaunchWebBrowser(&param);
+}
+
 int main() {
 	psvDebugScreenInit();
-	printf("VPKMirror direct installer\n");
+	initSceAppUtil();
 	/* grab app param from our custom uri
 	   full app param looks like:
 	   type=LAUNCH_APP_BY_URI&uri=vpk:install?test
@@ -79,17 +89,19 @@ int main() {
 	// checks if argument is present, if not it does the uri mod and opens the website
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
-		printf("Installing uri mod..\n");
 		do_uri_mod();
-		sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
+		open_browser("http://vpkmirror.com");
+		//sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
+		sceKernelDelayThread(1000);
 		sceKernelExitProcess(0);
 	}
 
-	// argument recieved, init everything
+	// argument recieved, init everything else
 	initVita2dLib();
-	initSceAppUtil();
 	netInit();
 	httpInit();
+
+	printf("VPKMirror direct installer\n");
 
 	// get the part of the argument that we need
 	char *vpk_name;

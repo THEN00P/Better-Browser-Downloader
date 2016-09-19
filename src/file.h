@@ -31,17 +31,7 @@
 
 enum FileTypes {
 	FILE_TYPE_UNKNOWN,
-	FILE_TYPE_BMP,
-	FILE_TYPE_INI,
-	FILE_TYPE_JPEG,
-	FILE_TYPE_MP3,
-	FILE_TYPE_OGG,
-	FILE_TYPE_PNG,
-	FILE_TYPE_SFO,
-	FILE_TYPE_TXT,
 	FILE_TYPE_VPK,
-	FILE_TYPE_XML,
-	FILE_TYPE_ZIP,
 };
 
 enum FileSortFlags {
@@ -96,9 +86,6 @@ int movePath(char *src_path, char *dst_path, int flags, FileProcessParam *param)
 
 int getFileType(char *file);
 
-int getNumberMountPoints();
-char **getMountPoints();
-
 FileListEntry *fileListFindEntry(FileList *list, char *name);
 FileListEntry *fileListGetNthEntry(FileList *list, int n);
 int fileListGetNumberByName(FileList *list, char *name);
@@ -108,7 +95,5 @@ int fileListRemoveEntry(FileList *list, FileListEntry *entry);
 int fileListRemoveEntryByName(FileList *list, char *name);
 
 void fileListEmpty(FileList *list);
-
-int fileListGetEntries(FileList *list, char *path);
 
 #endif

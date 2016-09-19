@@ -2,7 +2,7 @@ TITLE_ID = VPKMIRROR
 TARGET = VPKMirror
 OBJS   = src/main.o src/font.o src/graphics.o src/init.o src/net.o src/io_process.o \
 	src/package_installer.o src/archive.o src/file.o src/message_dialog.o \
-	src/config.o src/utils.o src/sha1.o minizip/unzip.o minizip/ioapi.o \
+	src/utils.o src/sha1.o minizip/unzip.o minizip/ioapi.o \
 	src/sfo.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
 
 LIBS = -lvita2d -lScePgf_stub -lSceDisplay_stub -lSceGxm_stub -lSceSysmodule_stub -lSceNet_stub \

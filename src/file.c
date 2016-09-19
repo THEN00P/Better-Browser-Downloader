@@ -22,24 +22,6 @@
 #include "utils.h"
 #include "sha1.h"
 
-static char *mount_points[] = {
-	"app0:",
-	"gro0:",
-	"grw0:",
-	"os0:",
-	"pd0:",
-	"sa0:",
-	"savedata0:",
-	"tm0:",
-	"ud0:",
-	"ur0:",
-	"ux0:",
-	"vd0:",
-	"vs0:",
-};
-
-#define N_MOUNT_POINTS (sizeof(mount_points) / sizeof(char **))
-
 int allocateReadFile(char *file, void **buffer) {
 	SceUID fd = sceIoOpen(file, SCE_O_RDONLY, 0);
 	if (fd < 0)
@@ -592,18 +574,7 @@ typedef struct {
 } ExtensionType;
 
 static ExtensionType extension_types[] = {
-	{ ".BMP",  FILE_TYPE_BMP },
-	{ ".INI",  FILE_TYPE_INI },
-	{ ".JPG",  FILE_TYPE_JPEG },
-	{ ".JPEG", FILE_TYPE_JPEG },
-	{ ".MP3",  FILE_TYPE_MP3 },
-	{ ".OGG",  FILE_TYPE_OGG },
-	{ ".PNG",  FILE_TYPE_PNG },
-	{ ".SFO",  FILE_TYPE_SFO },
-	{ ".TXT",  FILE_TYPE_TXT },
-	{ ".VPK",  FILE_TYPE_VPK },
-	{ ".XML",  FILE_TYPE_XML },
-	{ ".ZIP",  FILE_TYPE_ZIP },
+	{ ".VPK",  FILE_TYPE_VPK }
 };
 
 int getFileType(char *file) {
@@ -618,14 +589,6 @@ int getFileType(char *file) {
 	}
 
 	return FILE_TYPE_UNKNOWN;
-}
-
-int getNumberMountPoints() {
-	return N_MOUNT_POINTS;
-}
-
-char **getMountPoints() {
-	return mount_points;
 }
 
 FileListEntry *fileListFindEntry(FileList *list, char *name) {
@@ -819,92 +782,4 @@ void fileListEmpty(FileList *list) {
 	list->length = 0;
 	list->files = 0;
 	list->folders = 0;
-}
-
-int fileListGetMountPointEntries(FileList *list) {
-	int i;
-	for (i = 0; i < N_MOUNT_POINTS; i++) {
-		if (mount_points[i]) {
-			SceIoStat stat;
-			memset(&stat, 0, sizeof(SceIoStat));
-			if (sceIoGetstat(mount_points[i], &stat) >= 0) {
-				FileListEntry *entry = malloc(sizeof(FileListEntry));
-				strcpy(entry->name, mount_points[i]);
-				entry->name_length = strlen(entry->name);
-				entry->is_folder = 1;
-				entry->type = FILE_TYPE_UNKNOWN;
-
-				memcpy(&entry->time, (SceDateTime *)&stat.st_ctime, sizeof(SceDateTime));
-
-				fileListAddEntry(list, entry, SORT_BY_NAME_AND_FOLDER);
-
-				list->folders++;
-			}
-		}
-	}
-
-	return 0;
-}
-
-int fileListGetDirectoryEntries(FileList *list, char *path) {
-	SceUID dfd = sceIoDopen(path);
-	if (dfd < 0)
-		return dfd;
-
-	FileListEntry *entry = malloc(sizeof(FileListEntry));
-	strcpy(entry->name, DIR_UP);
-	entry->name_length = strlen(entry->name);
-	entry->is_folder = 1;
-	entry->type = FILE_TYPE_UNKNOWN;
-	fileListAddEntry(list, entry, SORT_BY_NAME_AND_FOLDER);
-
-	int res = 0;
-
-	do {
-		SceIoDirent dir;
-		memset(&dir, 0, sizeof(SceIoDirent));
-
-		res = sceIoDread(dfd, &dir);
-		if (res > 0) {
-			if (strcmp(dir.d_name, ".") == 0 || strcmp(dir.d_name, "..") == 0)
-				continue;
-
-			FileListEntry *entry = malloc(sizeof(FileListEntry));
-
-			strcpy(entry->name, dir.d_name);
-
-			entry->is_folder = SCE_S_ISDIR(dir.d_stat.st_mode);
-			if (entry->is_folder) {
-				addEndSlash(entry->name);
-				entry->type = FILE_TYPE_UNKNOWN;
-				list->folders++;
-			} else {
-				entry->type = getFileType(entry->name);
-				list->files++;
-			}
-
-			entry->name_length = strlen(entry->name);
-			entry->size = dir.d_stat.st_size;
-
-			memcpy(&entry->time, (SceDateTime *)&dir.d_stat.st_mtime, sizeof(SceDateTime));
-
-			fileListAddEntry(list, entry, SORT_BY_NAME_AND_FOLDER);
-		}
-	} while (res > 0);
-
-	sceIoDclose(dfd);
-
-	return 0;
-}
-
-int fileListGetEntries(FileList *list, char *path) {
-	if (isInArchive()) {
-		return fileListGetArchiveEntries(list, path);
-	}
-
-	if (strcasecmp(path, HOME_PATH) == 0) {
-		return fileListGetMountPointEntries(list);
-	}
-
-	return fileListGetDirectoryEntries(list, path);
 }

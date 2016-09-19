@@ -25,7 +25,6 @@
 #include "utils.h"
 #include "sfo.h"
 #include "sha1.h"
-#include "sysmodule_internal.h"
 #include "../libpromoter/promoterutil.h"
 
 #include "base_head_bin.h"
