@@ -21,7 +21,7 @@ void sql_simple_exec(sqlite3 *db, const char *sql) {
 	int ret = 0;
 	ret = sqlite3_exec(db, sql, NULL, NULL, &error);
 	if (error) {
-		//printf("Failed to execute %s: %s\n", sql, error);
+		printf("Failed to execute %s: %s\n", sql, error);
 		sqlite3_free(error);
 		goto fail;
 	}
@@ -36,7 +36,7 @@ void do_uri_mod(void) {
 	sqlite3 *db;
 	ret = sqlite3_open(APP_DB, &db);
 	if (ret) {
-		//printf("Failed to open the database: %s\n", sqlite3_errmsg(db));
+		printf("Failed to open the database: %s\n", sqlite3_errmsg(db));
 	}
 
 	sql_simple_exec(db, "DELETE FROM tbl_uri WHERE titleId='VPKMIRROR'");
@@ -48,11 +48,9 @@ void do_uri_mod(void) {
 	return;
 }
 
-int extract_vpk(char *path) {
-	//focusOnFilename(path);
-}
-
-int main(int argc, char *argv[]) {
+int main() {
+	psvDebugScreenInit();
+	printf("VPKMirror direct installer\n");
 	/* grab app param from our custom uri
 	   full app param looks like:
 	   type=LAUNCH_APP_BY_URI&uri=vpk:install?test
@@ -63,7 +61,7 @@ int main(int argc, char *argv[]) {
 	// checks if argument is present, if not it does the uri mod and opens the website
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
-		//printf("Installing uri mod...\n");
+		printf("Installing uri mod..\n");
 		do_uri_mod();
 		sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
 		sceKernelExitProcess(0);
@@ -81,30 +79,22 @@ int main(int argc, char *argv[]) {
 
 	// create url based off the vpk name
 	char *vpk_url = malloc(1024 * sizeof(char));
-	snprintf(vpk_url, 1024, "http://vpkmirror.com/files/vpk/%s", vpk_name);
-
-	// check if directory exists, create directory if necessary
-	int dir_chk = sceIoDopen("ux0:/data/VPKMirror");
-	if (dir_chk != 0) {
-		sceIoMkdir("ux0:/data/VPKMirror", 0777);
-	}
+	snprintf(vpk_url, 512, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
 	// download vpk
-	//printf("Downloading vpk..\n");
-	char *vpk_path = malloc(1024 * sizeof(char));
-	snprintf(vpk_path, 1024, "ux0:/data/VPKMirror/%s", vpk_name);
-	//download(vpk_url, vpk_path);
+	printf("Downloading vpk..\n");
+	char *vpk_path = malloc(512 * sizeof(char));
+	snprintf(vpk_path, 512, "ux0:/temp/%s", vpk_name);
+	download(vpk_url, vpk_path);
 
-	while (1) {
-		startDrawing();
-		initMessageDialog(SCE_MSG_DIALOG_BUTTON_TYPE_OK, "test message!");
-		isMessageDialogRunning();
-		updateMessageDialog();
-		vita2d_common_dialog_update();
-		endDrawing();
-	}
+	// install vpk
+	printf("Installing vpk..\n");
+	installPackage(vpk_path);
 
-	//sceKernelDelayThread(3 * 1000 * 1000);
+	// cleanup
+	sceIoRemove(vpk_path);
+
+	sceKernelDelayThread(3 * 1000 * 1000);
 
 	httpTerm();
 	netTerm();
