@@ -114,7 +114,7 @@ int main() {
 	// cleanup
 	sceIoRemove(vpk_path);
 
-	printf("\nDone! The homebrew now be installed\n");
+	printf("\nDone! The homebrew is now installed\n");
 	printf("\nAuto exiting in 3 seconds..\n");
 
 	sceKernelDelayThread(3 * 1000 * 1000);
