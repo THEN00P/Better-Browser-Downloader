@@ -227,6 +227,10 @@ int makeHeadBin() {
 
 	// Enforce TITLE_ID format
 	if (strlen(titleid) != 9)
+		//TODO auto correct this
+		psvDebugScreenSetFgColor(COLOR_RED);
+		printf("\nERROR: TitleID must be 9 characters long!\n");
+		psvDebugScreenSetFgColor(COLOR_WHITE);
 		return -2;
 
 	// Get content id
@@ -310,6 +314,8 @@ int installPackage(char *file) {
 	res = promote(PACKAGE_DIR);
 	if (res < 0)
 		return res;
+
+	printf("\nDone! The homebrew is now installed\n");
 
 	return 0;
 }
