@@ -66,16 +66,6 @@ void do_uri_mod(void) {
 	return;
 }
 
-void open_browser(char *url) {
-	SceAppUtilWebBrowserParam param;
-
-	param.str = url;
-	param.strlen = strlen(url);
-	param.launchMode = 0;
-
-	sceAppUtilLaunchWebBrowser(&param);
-}
-
 int main() {
 	psvDebugScreenInit();
 	initSceAppUtil();
@@ -90,9 +80,10 @@ int main() {
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
 		do_uri_mod();
-		open_browser("http://vpkmirror.com");
-		//sceAppMgrLaunchAppByUri(0x20000, "http://vpkmirror.com");
-		sceKernelDelayThread(1000);
+		sceKernelDelayThread(10000);
+		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
+		sceKernelDelayThread(10000);
+		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
 		sceKernelExitProcess(0);
 	}
 
