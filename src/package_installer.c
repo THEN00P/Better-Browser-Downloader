@@ -226,12 +226,13 @@ int makeHeadBin() {
 	getSfoString(sfo_buffer, "TITLE_ID", titleid, sizeof(titleid));
 
 	// Enforce TITLE_ID format
-	if (strlen(titleid) != 9)
+	if (strlen(titleid) != 9) {
 		//TODO auto correct this
 		psvDebugScreenSetFgColor(COLOR_RED);
 		printf("\nERROR: TitleID must be 9 characters long!\n");
 		psvDebugScreenSetFgColor(COLOR_WHITE);
 		return -2;
+	}
 
 	// Get content id
 	char contentid[48];
