@@ -19,7 +19,6 @@
 #include "main.h"
 #include "archive.h"
 #include "file.h"
-#include "message_dialog.h"
 #include "utils.h"
 #include "sfo.h"
 
@@ -148,15 +147,6 @@ int SFOReader(char *file) {
 			}
 		}
 
-		// Start drawing
-		startDrawing();
-
-		// Draw shell info
-		//drawShellInfo(file);
-
-	    // Draw scroll bar
-	   	//drawScrollBar(base_pos, sfo_header->count);
-
 		int i;
 		for (i = 0; i < MAX_ENTRIES && (base_pos + i) < sfo_header->count; i++) {
 			SfoEntry *entries = (SfoEntry *)(buffer + sizeof(SfoHeader) + (sizeof(SfoEntry) * (i + base_pos)));
@@ -164,7 +154,6 @@ int SFOReader(char *file) {
 			uint32_t color = (rel_pos == i) ? TEXT_FOCUS_COLOR : TEXT_COLOR;
 
 	    	char *name = (char *)buffer + sfo_header->keyofs + entries->nameofs;
-			pgf_draw_textf(SHELL_MARGIN_X, START_Y + (FONT_Y_SPACE * i), color, FONT_SIZE, "%s", name);
 
 			char string[128];
 
@@ -181,12 +170,7 @@ int SFOReader(char *file) {
 					snprintf(string, sizeof(string), "%X", *(unsigned int *)data);
 					break;
 			}
-
-			//pgf_draw_textf(ALIGN_LEFT(INFORMATION_X, vita2d_pgf_text_width(font, FONT_SIZE, string)), START_Y + (FONT_Y_SPACE * i), color, FONT_SIZE, string);
 		}
-
-		// End drawing
-		endDrawing();
 	}
 
 	free(buffer);

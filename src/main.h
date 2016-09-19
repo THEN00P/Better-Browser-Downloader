@@ -39,6 +39,8 @@
 #include <psp2/sysmodule.h>
 #include <vita2d.h>
 
+#define printf psvDebugScreenPrintf
+
 #define SCE_ERROR_ERRNO_EEXIST 0x80010011
 #define SCE_ERROR_ERRNO_ENODEV 0x80010013
 

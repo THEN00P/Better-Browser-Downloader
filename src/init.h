@@ -28,7 +28,4 @@ extern int language, enter_button, date_format, time_format;
 void initSceAppUtil();
 void finishSceAppUtil();
 
-void initVita2dLib();
-void finishVita2dLib();
-
 #endif

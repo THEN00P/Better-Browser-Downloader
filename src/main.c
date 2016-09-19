@@ -21,8 +21,6 @@
 #include "net.h"
 #include "sqlite3.h"
 
-#define printf psvDebugScreenPrintf
-
 #define APP_DB "ur0:/shell/db/app.db"
 
 int sceAppMgrGetAppParam(char *param);
@@ -69,6 +67,9 @@ void do_uri_mod(void) {
 int main() {
 	psvDebugScreenInit();
 	initSceAppUtil();
+
+	printf("VPK Mirror direct installer v1 created by SMOKE & haxxey\n\n");
+
 	/* grab app param from our custom uri
 	   full app param looks like:
 	   type=LAUNCH_APP_BY_URI&uri=vpk:install?test
@@ -80,7 +81,8 @@ int main() {
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
 		do_uri_mod();
-		sceKernelDelayThread(10000);
+		printf("This should now open the browser\nFrom there you can click a link and it will return here\n");
+		sceKernelDelayThread(5 * 1000 * 1000); // 5 seconds
 		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
 		sceKernelDelayThread(10000);
 		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
@@ -88,11 +90,8 @@ int main() {
 	}
 
 	// argument recieved, init everything else
-	initVita2dLib();
 	netInit();
 	httpInit();
-
-	printf("VPKMirror direct installer\n");
 
 	// get the part of the argument that we need
 	char *vpk_name;
@@ -103,24 +102,26 @@ int main() {
 	snprintf(vpk_url, 512, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
 	// download vpk
-	printf("Downloading vpk..\n");
+	printf("Downloading %s\n", vpk_name);
 	char *vpk_path = malloc(512 * sizeof(char));
 	snprintf(vpk_path, 512, "ux0:/temp/%s", vpk_name);
 	download(vpk_url, vpk_path);
 
 	// install vpk
-	printf("Installing vpk..\n");
+	printf("Installing %s\n", vpk_name);
 	installPackage(vpk_path);
 
 	// cleanup
 	sceIoRemove(vpk_path);
+
+	printf("\nDone! The homebrew now be installed\n");
+	printf("\nAuto exiting in 3 seconds..\n");
 
 	sceKernelDelayThread(3 * 1000 * 1000);
 
 	httpTerm();
 	netTerm();
 	finishSceAppUtil();
-	finishVita2dLib();
 
 	sceKernelExitProcess(0);
 }
