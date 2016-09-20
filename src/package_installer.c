@@ -233,6 +233,14 @@ int makeHeadBin() {
 		psvDebugScreenSetFgColor(COLOR_WHITE);
 		return -2;
 	}
+	
+	if (strcmp(titleid, "VPKMIRROR") == 0) {
+		// maybe add an auto-updater a la VitaShell?
+		psvDebugScreenSetFgColor(COLOR_RED);
+		printf("\nERROR: Cannot install the direct installer directly!\n");
+		psvDebugScreenSetFgColor(COLOR_WHITE);
+		return -2;
+	}
 
 	// Get content id
 	char contentid[48];
