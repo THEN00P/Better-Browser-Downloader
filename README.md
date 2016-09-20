@@ -3,8 +3,9 @@
 A homebrew created by [SMOKE5] (https://github.com/SMOKE5) for [haxxey] (https://github.com/haxxey) and haxxey's website http://vpkmirror.com
 
 ## Extra Credits:
- * TheFlow for his package installation code
- * haxxey for the images used in this homebrew and of course the website itself
+ * [TheFlow] (https://twitter.com/theflow0) for his package installation code
+ * [haxxey] (https://twitter.com/haxxeyHD) for the images used in this homebrew and of course the website itself
+ * [ACViper] (https://twitter.com/ACViperPro) for his wonderful job on the live area designs
 
 ## Special thanks to the testers:
  * [Cfw_Hyppe] (https://twitter.com/Cfw_Hype)
