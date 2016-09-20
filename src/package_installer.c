@@ -234,6 +234,7 @@ int makeHeadBin() {
 		return -2;
 	}
 	
+	// Don't allow for self-installing - this crashes the app
 	if (strcmp(titleid, "VPKMIRROR") == 0) {
 		// maybe add an auto-updater a la VitaShell?
 		psvDebugScreenSetFgColor(COLOR_RED);
