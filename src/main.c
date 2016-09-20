@@ -68,7 +68,7 @@ int main() {
 	psvDebugScreenInit();
 	initSceAppUtil();
 
-	printf("VPK Mirror direct installer v1 created by SMOKE & haxxey\n\n");
+	printf("VPK Mirror direct installer v1.1 created by SMOKE & haxxey\n\n");
 
 	/* grab app param from our custom uri
 	   full app param looks like:
@@ -81,7 +81,7 @@ int main() {
 	int arg_len = strlen(AppParam);
 	if (arg_len == 0) {
 		do_uri_mod();
-		printf("This should now open the browser\nFrom there you can click a link and it will return here\n");
+		printf("This should now open the browser.\nFrom there you can click a link and it will return here.\n");
 		sceKernelDelayThread(5 * 1000 * 1000); // 5 seconds
 		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
 		sceKernelDelayThread(10000);
@@ -102,19 +102,19 @@ int main() {
 	snprintf(vpk_url, 512, "http://vpkmirror.com/files/vpk/%s", vpk_name);
 
 	// download vpk
-	printf("Downloading %s\n", vpk_name);
+	printf("Downloading %s...\n", vpk_name);
 	char *vpk_path = malloc(512 * sizeof(char));
 	snprintf(vpk_path, 512, "ux0:/temp/%s", vpk_name);
 	download(vpk_url, vpk_path);
 
 	// install vpk
-	printf("Installing %s\n", vpk_name);
+	printf("Installing %s...\n", vpk_name);
 	installPackage(vpk_path);
 
 	// cleanup
 	sceIoRemove(vpk_path);
 
-	printf("\nAuto exiting in 5 seconds..\n");
+	printf("\nAuto exiting in 5 seconds...\n");
 
 	sceKernelDelayThread(5 * 1000 * 1000);
 
