@@ -71,7 +71,6 @@ int fileListGetArchiveEntries(FileList *list, char *path) {
 					list->folders++;
 				} else {
 					entry->is_folder = 0;
-					entry->type = getFileType(entry->name);
 					list->files++;
 				}
 

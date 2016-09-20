@@ -48,6 +48,4 @@ int getSfoString(void *buffer, char *name, char *string, int length);
 int setSfoValue(void *buffer, char *name, uint32_t value);
 int setSfoString(void *buffer, char *name, char *string);
 
-int SFOReader(char *file);
-
 #endif

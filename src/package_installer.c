@@ -17,11 +17,9 @@
 */
 
 #include "main.h"
-#include "io_process.h"
 #include "package_installer.h"
 #include "archive.h"
 #include "file.h"
-#include "message_dialog.h"
 #include "utils.h"
 #include "sfo.h"
 #include "sha1.h"
@@ -211,14 +209,19 @@ int makeHeadBin() {
 	// head.bin must not be present
 	SceIoStat stat;
 	memset(&stat, 0, sizeof(SceIoStat));
-	if (sceIoGetstat(HEAD_BIN, &stat) >= 0)
-		return -1;
+	if (sceIoGetstat(HEAD_BIN, &stat) >= 0) {
+		sceIoRemove(HEAD_BIN);
+	}
 
 	// Read param.sfo
 	void *sfo_buffer = NULL;
 	int res = allocateReadFile(PACKAGE_DIR "/sce_sys/param.sfo", &sfo_buffer);
-	if (res < 0)
+	if (res < 0) {
+		psvDebugScreenSetFgColor(COLOR_RED);
+		printf("\nERROR: TitleID must be exactly 9 characters long!\n");
+		psvDebugScreenSetFgColor(COLOR_WHITE);
 		return res;
+	}
 
 	// Get title id
 	char titleid[12];
@@ -229,7 +232,7 @@ int makeHeadBin() {
 	if (strlen(titleid) != 9) {
 		//TODO auto correct this
 		psvDebugScreenSetFgColor(COLOR_RED);
-		printf("\nERROR: TitleID must be 9 characters long!\n");
+		printf("\nERROR: TitleID must be exactly 9 characters long!\n");
 		psvDebugScreenSetFgColor(COLOR_WHITE);
 		return -2;
 	}
@@ -328,159 +331,4 @@ int installPackage(char *file) {
 	printf("\nDone! The homebrew is now installed\n");
 
 	return 0;
-}
-
-int install_thread(SceSize args_size, InstallArguments *args) {
-	int res;
-	SceUID thid = -1;
-	char path[MAX_PATH_LENGTH];
-
-	// Lock power timers
-	powerLock();
-
-	// Set progress to 0%
-	sceMsgDialogProgressBarSetValue(SCE_MSG_DIALOG_PROGRESSBAR_TARGET_BAR_DEFAULT, 0);
-	sceKernelDelayThread(DIALOG_WAIT); // Needed to see the percentage
-
-	// Recursively clean up package_temp directory
-	removePath(PACKAGE_PARENT, NULL);
-	sceIoMkdir(PACKAGE_PARENT, 0777);
-
-	// Open archive
-	res = archiveOpen(args->file);
-	if (res < 0) {
-		closeWaitDialog();
-		errorDialog(res);
-		goto EXIT;
-	}
-
-	// If you cancelled at the time archiveOpen was working,
-	// it would still open the full permission dialog instead of termiating.
-	// So terminate now
-	if (cancelHandler()) {
-		closeWaitDialog();
-		dialog_step = DIALOG_STEP_CANCELLED;
-		goto EXIT;
-	}
-
-	// Check for param.sfo
-	snprintf(path, MAX_PATH_LENGTH, "%s/sce_sys/param.sfo", args->file);
-	if (archiveFileGetstat(path, NULL) < 0) {
-		closeWaitDialog();
-		errorDialog(-2);
-		goto EXIT;
-	}
-
-	// Check permissions
-	/*snprintf(path, MAX_PATH_LENGTH, "%s/eboot.bin", args->file);
-	SceUID fd = archiveFileOpen(path, SCE_O_RDONLY, 0);
-	if (fd >= 0) {
-		char buffer[0x88];
-		archiveFileRead(fd, buffer, sizeof(buffer));
-		archiveFileClose(fd);
-
-		// Team molecule's request: Full permission access warning
-		uint64_t authid = *(uint64_t *)(buffer + 0x80);
-		if (authid == 0x2F00000000000001 || authid == 0x2F00000000000003) {
-			closeWaitDialog();
-
-			initMessageDialog(SCE_MSG_DIALOG_BUTTON_TYPE_YESNO, language_container[INSTALL_WARNING]);
-			dialog_step = DIALOG_STEP_INSTALL_WARNING;
-
-			// Wait for response
-			while (dialog_step == DIALOG_STEP_INSTALL_WARNING) {
-				sceKernelDelayThread(10 * 1000);
-			}
-
-			// Cancelled
-			if (dialog_step == DIALOG_STEP_CANCELLED) {
-				closeWaitDialog();
-				goto EXIT;
-			}
-
-			// Init again
-			initMessageDialog(MESSAGE_DIALOG_PROGRESS_BAR, language_container[INSTALLING]);
-			dialog_step = DIALOG_STEP_INSTALLING;
-		}
-	}*/
-
-	// Src path
-	char src_path[MAX_PATH_LENGTH];
-	strcpy(src_path, args->file);
-	addEndSlash(src_path);
-
-	// Get archive path info
-	uint64_t size = 0;
-	uint32_t folders = 0, files = 0;
-	getArchivePathInfo(src_path, &size, &folders, &files);
-
-	// Check memory card free space
-	if (checkMemoryCardFreeSpace(size))
-		goto EXIT;
-
-	// Update thread
-	thid = createStartUpdateThread(size + folders);
-
-	// Extract process
-	uint64_t value = 0;
-
-	FileProcessParam param;
-	param.value = &value;
-	param.max = size + folders;
-	param.SetProgress = SetProgress;
-	param.cancelHandler = cancelHandler;
-
-	res = extractArchivePath(src_path, PACKAGE_DIR "/", &param);
-	if (res <= 0) {
-		closeWaitDialog();
-		dialog_step = DIALOG_STEP_CANCELLED;
-		errorDialog(res);
-		goto EXIT;
-	}
-
-	// Close archive
-	res = archiveClose();
-	if (res < 0) {
-		closeWaitDialog();
-		errorDialog(res);
-		goto EXIT;
-	}
-
-	// Make head.bin
-	res = makeHeadBin();
-	if (res < 0) {
-		closeWaitDialog();
-		errorDialog(res);
-		goto EXIT;
-	}
-
-	// Promote
-	res = promote(PACKAGE_DIR);
-	if (res < 0) {
-		closeWaitDialog();
-		errorDialog(res);
-		goto EXIT;
-	}
-
-	// Set progress to 100%
-	sceMsgDialogProgressBarSetValue(SCE_MSG_DIALOG_PROGRESSBAR_TARGET_BAR_DEFAULT, 100);
-	sceKernelDelayThread(COUNTUP_WAIT);
-
-	// Close
-	sceMsgDialogClose();
-
-	dialog_step = DIALOG_STEP_INSTALLED;
-
-EXIT:
-	if (thid >= 0)
-		sceKernelWaitThreadEnd(thid, NULL, NULL);
-
-	// Recursively clean up package_temp directory
-	removePath(PACKAGE_PARENT, NULL);
-	sceIoMkdir(PACKAGE_PARENT, 0777);	
-
-	// Unlock power timers
-	powerUnlock();
-
-	return sceKernelExitDeleteThread(0);
 }

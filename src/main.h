@@ -26,7 +26,6 @@
 
 #include <psp2/appmgr.h>
 #include <psp2/apputil.h>
-#include <psp2/ctrl.h>
 #include <psp2/display.h>
 #include <psp2/ime_dialog.h>
 #include <psp2/message_dialog.h>

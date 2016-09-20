@@ -24,43 +24,11 @@
 #define ALIGN_CENTER(a, b) ((a - b) / 2)
 #define ALIGN_LEFT(x, w) (x - w)
 
-#define ANALOG_CENTER 128
-#define ANALOG_THRESHOLD 64
-#define ANALOG_SENSITIVITY 16
-
-enum {
-	SCE_CTRL_RIGHT_ANALOG_UP	= 0x0020000,
-	SCE_CTRL_RIGHT_ANALOG_RIGHT	= 0x0040000,
-	SCE_CTRL_RIGHT_ANALOG_DOWN	= 0x0080000,
-	SCE_CTRL_RIGHT_ANALOG_LEFT	= 0x0100000,
-
-	SCE_CTRL_LEFT_ANALOG_UP		= 0x0200000,
-	SCE_CTRL_LEFT_ANALOG_RIGHT	= 0x0400000,
-	SCE_CTRL_LEFT_ANALOG_DOWN	= 0x0800000,
-	SCE_CTRL_LEFT_ANALOG_LEFT	= 0x1000000,
-	SCE_CTRL_ENTER				= 0x2000000,
-	SCE_CTRL_CANCEL				= 0x4000000,
-};
-
-extern SceCtrlData pad;
-extern uint32_t old_buttons, current_buttons, pressed_buttons, hold_buttons, hold2_buttons, released_buttons;
-
-void startDrawing();
-void endDrawing();
-
-void closeWaitDialog();
-
-void errorDialog(int error);
-void infoDialog(char *msg, ...);
-
 int checkMemoryCardFreeSpace(uint64_t size);
 
 void initPowerTickThread();
 void powerLock();
 void powerUnlock();
-
-void readPad();
-int holdButtons(SceCtrlData *pad, uint32_t buttons, uint64_t time);
 
 int hasEndSlash(char *path);
 int removeEndSlash(char *path);

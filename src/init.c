@@ -17,12 +17,6 @@
 */
 
 #include "main.h"
-#include "init.h"
-#include "file.h"
-#include "utils.h"
-
-// System params
-int language = 0, enter_button = 0, date_format = 0, time_format = 0;
 
 void initSceAppUtil() {
 	// Init SceAppUtil
@@ -31,13 +25,6 @@ void initSceAppUtil() {
 	memset(&init_param, 0, sizeof(SceAppUtilInitParam));
 	memset(&boot_param, 0, sizeof(SceAppUtilBootParam));
 	sceAppUtilInit(&init_param, &boot_param);
-
-	// Set common dialog config
-	SceCommonDialogConfigParam config;
-	sceCommonDialogConfigParamInit(&config);
-	sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_LANG, (int *)&config.language);
-	sceAppUtilSystemParamGetInt(SCE_SYSTEM_PARAM_ID_ENTER_BUTTON, (int *)&config.enterButtonAssign);
-	sceCommonDialogSetConfigParam(&config);
 }
 
 void finishSceAppUtil() {

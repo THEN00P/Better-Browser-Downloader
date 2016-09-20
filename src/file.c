@@ -149,73 +149,6 @@ int getFileSha1(char *pInputFileName, uint8_t *pSha1Out, FileProcessParam *param
 	return 1;
 }
 
-int getPathInfo(char *path, uint64_t *size, uint32_t *folders, uint32_t *files, int (* handler)(char *path)) {
-	SceUID dfd = sceIoDopen(path);
-	if (dfd >= 0) {
-		int res = 0;
-
-		do {
-			SceIoDirent dir;
-			memset(&dir, 0, sizeof(SceIoDirent));
-
-			res = sceIoDread(dfd, &dir);
-			if (res > 0) {
-				if (strcmp(dir.d_name, ".") == 0 || strcmp(dir.d_name, "..") == 0)
-					continue;
-
-				char *new_path = malloc(strlen(path) + strlen(dir.d_name) + 2);
-				snprintf(new_path, MAX_PATH_LENGTH, "%s%s%s", path, hasEndSlash(path) ? "" : "/", dir.d_name);
-
-				if (handler && handler(new_path)) {
-					free(new_path);
-					continue;
-				}
-
-				if (SCE_S_ISDIR(dir.d_stat.st_mode)) {
-					int ret = getPathInfo(new_path, size, folders, files, handler);
-					if (ret <= 0) {
-						free(new_path);
-						sceIoDclose(dfd);
-						return ret;
-					}
-				} else {
-					if (size)
-						(*size) += dir.d_stat.st_size;
-
-					if (files)
-						(*files)++;
-				}
-
-				free(new_path);
-			}
-		} while (res > 0);
-
-		sceIoDclose(dfd);
-
-		if (folders)
-			(*folders)++;
-	} else {
-		if (handler && handler(path))
-			return 1;
-
-		if (size) {
-			SceIoStat stat;
-			memset(&stat, 0, sizeof(SceIoStat));
-
-			int res = sceIoGetstat(path, &stat);
-			if (res < 0)
-				return res;
-
-			(*size) += stat.st_size;
-		}
-
-		if (files)
-			(*files)++;
-	}
-
-	return 1;
-}
-
 int removePath(char *path, FileProcessParam *param) {
 	SceUID dfd = sceIoDopen(path);
 	if (dfd >= 0) {
@@ -566,29 +499,6 @@ int movePath(char *src_path, char *dst_path, int flags, FileProcessParam *param)
 	}
 
 	return 1;
-}
-
-typedef struct {
-	char *extension;
-	int type;
-} ExtensionType;
-
-static ExtensionType extension_types[] = {
-	{ ".VPK",  FILE_TYPE_VPK }
-};
-
-int getFileType(char *file) {
-	char *p = strrchr(file, '.');
-	if (p) {
-		int i;
-		for (i = 0; i < (sizeof(extension_types) / sizeof(ExtensionType)); i++) {
-			if (strcasecmp(p, extension_types[i].extension) == 0) {
-				return extension_types[i].type;
-			}
-		}
-	}
-
-	return FILE_TYPE_UNKNOWN;
 }
 
 FileListEntry *fileListFindEntry(FileList *list, char *name) {
