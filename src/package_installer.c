@@ -216,12 +216,8 @@ int makeHeadBin() {
 	// Read param.sfo
 	void *sfo_buffer = NULL;
 	int res = allocateReadFile(PACKAGE_DIR "/sce_sys/param.sfo", &sfo_buffer);
-	if (res < 0) {
-		psvDebugScreenSetFgColor(COLOR_RED);
-		printf("\nERROR: TitleID must be exactly 9 characters long!\n");
-		psvDebugScreenSetFgColor(COLOR_WHITE);
+	if (res < 0) 
 		return res;
-	}
 
 	// Get title id
 	char titleid[12];
