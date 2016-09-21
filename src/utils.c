@@ -22,21 +22,6 @@
 
 static int lock_power = 0;
 
-int checkMemoryCardFreeSpace(uint64_t size) {
-	uint64_t free_size = 0, max_size = 0;
-	sceAppMgrGetDevInfo("ux0:", &max_size, &free_size);
-
-	if (size >= (free_size + (40 * 1024 * 1024))) {
-		char size_string[16];
-		getSizeString(size_string, size - (free_size + (40 * 1024 * 1024)));
-		printf("There is not enough free space on the memory card.", size_string);
-
-		return 1;
-	}
-
-	return 0;
-}
-
 int power_tick_thread(SceSize args, void *argp) {
 	while (1) {
 		if (lock_power > 0) {
@@ -89,17 +74,4 @@ int addEndSlash(char *path) {
 	}
 
 	return 0;
-}
-
-void getSizeString(char *string, uint64_t size) {
-	double double_size = (double)size;
-
-	int i = 0;
-	static char *units[] = { "B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB" };
-	while (double_size >= 1024.0f) {
-		double_size /= 1024.0f;
-		i++;
-	}
-
-	sprintf(string, "%.*f %s", (i == 0) ? 0 : 2, double_size, units[i]);
 }

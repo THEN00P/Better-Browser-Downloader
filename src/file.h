@@ -22,7 +22,6 @@
 #define MAX_PATH_LENGTH 1024
 #define MAX_NAME_LENGTH 256
 #define MAX_SHORT_NAME_LENGTH 64
-#define MAX_MOUNT_POINT_LENGTH 16
 
 #define TRANSFER_SIZE 64 * 1024
 
@@ -77,7 +76,6 @@ int ReadFile(char *file, void *buf, int size);
 int WriteFile(char *file, void *buf, int size);
 
 int getFileSize(char *pInputFileName);
-int getFileSha1(char *pInputFileName, uint8_t *pSha1Out, FileProcessParam *param);
 int removePath(char *path, FileProcessParam *param);
 int copyFile(char *src_path, char *dst_path, FileProcessParam *param);
 int copyPath(char *src_path, char *dst_path, FileProcessParam *param);

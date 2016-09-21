@@ -57,8 +57,8 @@ void httpTerm() {
 }
 
 void download(const char *url, const char *dest) {
-	// Create template with user agend "PS Vita Sample App"
-	int tpl = sceHttpCreateTemplate("VPKMirror", 1, 1);
+	// Create template with user agend "VPK Mirror Direct Installer"
+	int tpl = sceHttpCreateTemplate("VPK Mirror Direct Installer", 1, 1);
 
 	// set url on the template
 	int conn = sceHttpCreateConnectionWithURL(tpl, url, 0);

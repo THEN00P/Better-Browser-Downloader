@@ -21,11 +21,6 @@
 
 #include "main.h"
 
-#define ALIGN_CENTER(a, b) ((a - b) / 2)
-#define ALIGN_LEFT(x, w) (x - w)
-
-int checkMemoryCardFreeSpace(uint64_t size);
-
 void initPowerTickThread();
 void powerLock();
 void powerUnlock();
@@ -33,7 +28,5 @@ void powerUnlock();
 int hasEndSlash(char *path);
 int removeEndSlash(char *path);
 int addEndSlash(char *path);
-
-void getSizeString(char *string, uint64_t size);
 
 #endif

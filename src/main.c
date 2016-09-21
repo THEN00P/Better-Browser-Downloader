@@ -25,13 +25,6 @@
 
 int sceAppMgrGetAppParam(char *param);
 
-volatile int dialog_step = DIALOG_STEP_NONE;
-static int is_in_archive = 0;
-
-int isInArchive() {
-	return is_in_archive;
-}
-
 void sql_simple_exec(sqlite3 *db, const char *sql) {
 	char *error = NULL;
 	int ret = 0;
@@ -82,7 +75,7 @@ int main() {
 	if (arg_len == 0) {
 		do_uri_mod();
 		printf("This should now open the browser.\nFrom there you can click a link and it will return here.\n");
-		sceKernelDelayThread(5 * 1000 * 1000); // 5 seconds
+		sceKernelDelayThread(3 * 1000 * 1000); // 3 seconds
 		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
 		sceKernelDelayThread(10000);
 		sceAppMgrLaunchAppByUri(0xFFFFF, "http://vpkmirror.com");
