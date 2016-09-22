@@ -87,25 +87,25 @@ int main() {
 	httpInit();
 
 	// get the part of the argument that we need
-	char *vpk_name;
-	vpk_name = strchr(AppParam, '?')+1;
+	char *file_name;
+	file_name = strchr(AppParam, '?')+1;
 
-	// create url based off the vpk name
-	char *vpk_url = malloc(512 * sizeof(char));
-	snprintf(vpk_url, 512, "http://vpkmirror.com/files/vpk/%s", vpk_name);
+	// create url based off the file name
+	char *file_url = malloc(512 * sizeof(char));
+	snprintf(file_url, 512, "http://vpkmirror.com/files/vpk/%s", file_name);
 
-	// download vpk
-	printf("Downloading %s...\n", vpk_name);
-	char *vpk_path = malloc(512 * sizeof(char));
-	snprintf(vpk_path, 512, "ux0:/temp/%s", vpk_name);
-	download(vpk_url, vpk_path);
+	// download file
+	printf("Downloading %s...\n", file_name);
+	char *file_path = malloc(512 * sizeof(char));
+	snprintf(file_path, 512, "ux0:/temp/%s", file_name);
+	download(file_url, file_path);
 
 	// install vpk
-	printf("Installing %s...\n", vpk_name);
-	installPackage(vpk_path);
+	printf("Installing %s...\n", file_name);
+	installPackage(file_path);
 
 	// cleanup
-	sceIoRemove(vpk_path);
+	sceIoRemove(file_path);
 
 	printf("\nAuto exiting in 5 seconds...\n");
 
