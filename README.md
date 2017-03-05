@@ -1,4 +1,4 @@
-# VPK Direct Installer
+# Better Browser Downloader
 
 A homebrew created by [SMOKE5] (https://github.com/SMOKE5) for [haxxey] (https://github.com/haxxey) and haxxey's website http://vpkmirror.com
 Modified by THEN00P to work everywhere including http://vpksource.com.
