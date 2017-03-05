@@ -35,6 +35,8 @@ void psvDebugScreenPrintf(const char *format, ...);
 Color psvDebugScreenSetFgColor(Color color);
 
 // set background color
+void print_color(const char *text, Color color);
+
 Color psvDebugScreenSetBgColor(Color color);
 
 void *psvDebugScreenGetVram();
@@ -50,4 +52,7 @@ enum {
 	COLOR_YELLOW = 0xFF00FFFF,
 	COLOR_GREY = 0xFF808080,
 	COLOR_GREEN = 0xFF00FF00,
+	RED     = 0xFF0000FF,
+	GREEN   = 0xFF00FF00,
+	WHITE   = 0xFFFFFFFF,
 };

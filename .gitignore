@@ -4,3 +4,5 @@
 *.vpk
 param.sfo
 eboot.bin
+2dtest/
+graphics/

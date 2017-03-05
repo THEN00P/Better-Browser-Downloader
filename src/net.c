@@ -26,6 +26,7 @@
 #include <psp2/net/netctl.h>
 #include <psp2/net/http.h>
 #include <psp2/sysmodule.h>
+#include <psp2/libssl.h> 
 
 void netInit() {
 	sceSysmoduleLoadModule(SCE_SYSMODULE_NET);
@@ -47,18 +48,22 @@ void netTerm() {
 }
 
 void httpInit() {
-	sceSysmoduleLoadModule(SCE_SYSMODULE_HTTP);
+	sceSysmoduleLoadModule(SCE_SYSMODULE_SSL);
+	sceSysmoduleLoadModule(SCE_SYSMODULE_HTTPS);
 	sceHttpInit(1*1024*1024);
+	sceSslInit(1*1024*1024);
 }
 
 void httpTerm() {
+	sceSslTerm();
 	sceHttpTerm();
-	sceSysmoduleUnloadModule(SCE_SYSMODULE_HTTP);
+	sceSysmoduleUnloadModule(SCE_SYSMODULE_HTTPS);
+	sceSysmoduleUnloadModule(SCE_SYSMODULE_SSL);
 }
 
 void download(const char *url, const char *dest) {
-	// Create template with user agend "VPK Mirror Direct Installer"
-	int tpl = sceHttpCreateTemplate("VPK Mirror Direct Installer", 1, 1);
+	// Create template with user agend "VitaBrowserDownloader"
+	int tpl = sceHttpCreateTemplate("VitaBrowserDownloader", 1, 1);
 
 	// set url on the template
 	int conn = sceHttpCreateConnectionWithURL(tpl, url, 0);

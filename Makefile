@@ -1,13 +1,13 @@
-TITLE_ID = VPKMIRROR
-TARGET = VPKMirror
-OBJS   = src/main.o src/font.o src/graphics.o src/init.o src/net.o \
+TITLE_ID = VPKSOURCE
+TARGET = BetterBrowserDowloader
+OBJS   = src/main.o src/font.o src/2dfont.o src/graphics.o src/init.o src/net.o \
 	src/package_installer.o src/archive.o src/file.o \
 	src/utils.o src/sha1.o minizip/unzip.o minizip/ioapi.o \
 	src/sfo.o src/vita_sqlite.o sqlite-3.6.23.1/sqlite3.o
 
-LIBS = -lSceDisplay_stub -lSceSysmodule_stub -lSceNet_stub \
-	-lSceNetCtl_stub -lSceHttp_stub -lSceAppMgr_stub -lSceAppUtil_stub \
-	-lScePower_stub libpromoter/libScePromoterUtil_stub.a -lz
+LIBS = -lvita2d -lScePgf_stub -lSceDisplay_stub -lSceGxm_stub -lSceSysmodule_stub -lSceNet_stub \
+	-lSceCtrl_stub -lSceNetCtl_stub -lSceHttp_stub -lSceAppMgr_stub -lSceAppUtil_stub -lSceSsl_stub \
+	-lSceCommonDialog_stub  -lScePower_stub -lSceGxm_stub -lfreetype -lpng libpromoter/libScePromoterUtil_stub.a -lz -lm
 
 DEFINES = -DSQLITE_OS_OTHER=1 -DSQLITE_TEMP_STORE=3 -DSQLITE_THREADSAFE=0
 
@@ -19,7 +19,7 @@ ASFLAGS = $(CFLAGS)
 all: $(TARGET).vpk
 
 $(TARGET).vpk: eboot.bin
-	vita-mksfoex -s TITLE_ID=$(TITLE_ID) "VPK Mirror" param.sfo
+	vita-mksfoex -s TITLE_ID=$(TITLE_ID) "Better Browser Dowloader" param.sfo
 	vita-pack-vpk -s param.sfo -b eboot.bin -a res/icon0.png=sce_sys/icon0.png \
 	-a res/template.xml=sce_sys/livearea/contents/template.xml \
 	-a res/startup.png=sce_sys/livearea/contents/startup.png \

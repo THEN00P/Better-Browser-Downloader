@@ -233,12 +233,8 @@ int makeHeadBin() {
 		return -2;
 	}
 	
-	// Don't allow for self-installing - this crashes the app
-	if (strcmp(titleid, "VPKMIRROR") == 0) {
-		// maybe add an auto-updater a la VitaShell?
-		psvDebugScreenSetFgColor(COLOR_RED);
-		printf("\nERROR: Cannot install the direct installer directly!\n");
-		psvDebugScreenSetFgColor(COLOR_WHITE);
+	if (strcmp(titleid, "VPKSOURCE") == 0) {
+		printf("Download this as a .mp4 from vpksource.com.");
 		return -2;
 	}
 
@@ -324,7 +320,8 @@ int installPackage(char *file) {
 	if (res < 0)
 		return res;
 
-	printf("\nDone! The homebrew is now installed\n");
+	print_color("DONE\n", GREEN);
 
 	return 0;
 }
+
