@@ -69,7 +69,7 @@ int main() {
 	psvDebugScreenInit();
 	initSceAppUtil();
 	
-	printf("Better Browser Dowloader v0.95\nCreated by SMOKE & haxxey. Modified by THEN00P.\n\n");
+	printf("Better Browser Downloader v0.95\nCreated by SMOKE & haxxey. Modified by THEN00P.\n\n");
 
 	/* grab app param from our custom uri
 	   full app param looks like:
